@@ -1,8 +1,18 @@
 <#1>
 <?php
-	
+if($ilDB->tableColumnExists("object_data", "antrago_id"))
+{
 	$query = 'UPDATE object_data SET '.
-			'import_id = antrago_id '.
-			'WHERE antrago_id > 0';
+		'import_id = antrago_id '.
+		'WHERE antrago_id > 0';
 	$res = $ilDB->manipulate($query);
+}
+
+?>
+<#2>
+<?php
+
+$query = "DELETE FROM ctrl_classfile WHERE plugin_path LIKE './Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/FhoevImport';";
+$res = $ilDB->manipulate($query);
+
 ?>

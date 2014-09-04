@@ -64,27 +64,6 @@ class ilFhoevImport
 	{
 		$this->types[] = $a_type;
 	}
-	
-	/**
-	 * Check if cron import is required
-	 */
-	public function checkCronImportRequired()
-	{
-		$settings = ilFhoevSettings::getInstance();
-		if(!$settings->isCronEnabled())
-		{
-			return false;
-		}
-		if(!$settings->getLastCronExecution())
-		{
-			return true;
-		}
-		if(($settings->getLastCronExecution() + $settings->getCronInterval() * 60) >= time()) 
-		{
-			return false;
-		}
-		return true;
-	}
 
 	/**
 	 * Do import
@@ -379,7 +358,7 @@ class ilFhoevImport
 	protected function initImportDirectory()
 	{
 		$dirname = dirname(ilFhoevSettings::getInstance()->getImportDir());
-		$this->working_dir = $dirname.'/importWorking_'.date('Y-m-d_H:i');
+		$this->working_dir = $dirname.'/importWorking_'.date('Y-m-d_H_i');
 
 		// Create new working directory
 		ilUtil::makeDirParents($this->working_dir);

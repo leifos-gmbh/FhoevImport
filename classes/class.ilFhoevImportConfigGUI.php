@@ -116,20 +116,15 @@ class ilFhoevImportConfigGUI extends ilPluginConfigGUI
 		$backup->setValue($settings->getBackupDir());
 		$form->addItem($backup);
 		
-		// cron en/disable
-		$cron = new ilCheckboxInputGUI($this->getPluginObject()->txt('cron'),'cron');
-		$cron->setValue(1);
-		$cron->setChecked($settings->isCronEnabled());
-		$form->addItem($cron);
-		
 		// cron intervall
-		$cron_i = new ilNumberInputGUI($this->getPluginObject()->txt('cron_interval'),'cron_intval');
+		$cron_i = new ilNumberInputGUI($this->getPluginObject()->txt('cron'),'cron_interval');
 		$cron_i->setMinValue(1);
 		$cron_i->setSize(2);
 		$cron_i->setMaxLength(3);
 		$cron_i->setRequired(true);
 		$cron_i->setValue($settings->getCronInterval());
-		$cron->addSubItem($cron_i);
+		$cron_i->setInfo($this->getPluginObject()->txt('cron_interval'));
+		$form->addItem($cron_i);
 		
 		return $form;
 	}
@@ -153,8 +148,7 @@ class ilFhoevImportConfigGUI extends ilPluginConfigGUI
 				$settings->setBackupDir($form->getInput('backup'));
 				$settings->setSoapUser($form->getInput('user'));
 				$settings->setSoapPass($form->getInput('pass'));
-				$settings->enableCron($form->getInput('cron'));
-				$settings->setCronInterval($form->getInput('cron_intval'));
+				$settings->setCronInterval($form->getInput('cron_interval'));
 				$settings->save();
 				
 				$settings->createDirectories();

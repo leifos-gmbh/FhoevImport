@@ -104,16 +104,7 @@ class ilFhoevSettings
 	{
 		return $this->pass;
 	}
-	
-	public function enableCron($a_val)
-	{
-		$this->cron = $a_val;
-	}
-	
-	public function isCronEnabled()
-	{
-		return $this->cron;
-	}
+
 
 	public function setCronInterval($a_int)
 	{
@@ -140,7 +131,6 @@ class ilFhoevSettings
 		$this->getStorage()->set('backup_dir',$this->getBackupDir());
 		$this->getStorage()->set('soap_user',$this->getSoapUser());
 		$this->getStorage()->set('soap_pass',$this->getSoapPass());
-		$this->getStorage()->set('cron',$this->isCronEnabled());
 		$this->getStorage()->set('cron_interval',$this->getCronInterval());
 	}
 	
@@ -179,7 +169,6 @@ class ilFhoevSettings
 		$this->enableLock($this->getStorage()->get('lock',$this->isLocked()));
 		$this->setSoapUser($this->getStorage()->get('soap_user', $this->getSoapUser()));
 		$this->setSoapPass($this->getStorage()->get('soap_pass', $this->getSoapPass()));
-		$this->enableCron($this->getStorage()->get('cron'),$this->isCronEnabled());
 		$this->setCronInterval($this->getStorage()->get('cron_interval',$this->getCronInterval()));
 		$this->cron_last_execution = $this->getStorage()->get('cron_last_execution',0);
 	}
