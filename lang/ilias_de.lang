@@ -1,0 +1,17 @@
+tab_settings#:#Einstellungen
+tab_import#:#Import
+tbl_fhoev_settings#:#Einstellungen zum Import
+tbl_settting_lock#:#Import-Lock
+tbl_setting_soap_user#:#Soap-User
+tbl_setting_soap_pass#:#Soap-Passwort
+tbl_settings_import#:#Verzeichnis für Importdateien
+tbl_settings_backup#:#Verzeichnis für importierte Dateien
+tbl_fhoev_import#:#Import starten
+import_selection#:#Auswahl zum Import
+import_selection_all#:#Alles importieren
+import_selection_selected#:#Nur ausgewählte Objekte importieren
+btn_import#:#Import starten
+import_success#:#Der Import wurde erfolgreich durchgeführt.
+err_import_locked#:#Der Import kann nicht gestartet werden, da ein anderer Importvorgang läuft.
+cron#:#Aktualisierung per Cron-job
+cron_interval#:#Aktualisierungsintervall

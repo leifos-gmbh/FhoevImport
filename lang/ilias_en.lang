@@ -1,0 +1,17 @@
+tab_settings#:#Settings
+tab_import#:#Import
+tbl_fhoev_settings#:#Import Settings
+tbl_settting_lock#:#Lock Active
+tbl_setting_soap_user#:#Soap User
+tbl_setting_soap_pass#:#Soap Password
+tbl_settings_import#:#Import Directory
+tbl_settings_backup#:#Directory for Imported Files
+tbl_fhoev_import#:#Start import
+import_selection#:#Import Selection
+import_selection_all#:#Import All
+import_selection_selected#:#Import Selected Objects
+btn_import#:#Start Import
+import_success#:#Successfully imported objects.
+err_import_locked#:#Import is locked. Aborting.
+cron#:#Refresh per cron-job
+cron_interval#:#Refresh Interval
