@@ -31,7 +31,6 @@ class ilFhoevImportCronJob extends ilCronJob
 	public function getDefaultScheduleType()
 	{
 		return self::SCHEDULE_TYPE_IN_MINUTES;
-		return self::SCHEDULE_TYPE_IN_HOURS;
 	}
 	
 	public function getDefaultScheduleValue()
@@ -56,6 +55,7 @@ class ilFhoevImportCronJob extends ilCronJob
 	
 	public function run()
 	{
+		$result = new ilCronJobResult();
 		$importer = ilFhoevImport::getInstance();
 		$importer->addType(ilFhoevImport::TYPE_CAT);
 		$importer->addType(ilFhoevImport::TYPE_USR);
@@ -66,16 +66,17 @@ class ilFhoevImportCronJob extends ilCronJob
 		{
 			$importer->import();
 			ilFhoevSettings::getInstance()->updateLastCronExecution();
-			$status = ilCronJobResult::STATUS_OK;
+			$result->setStatus(ilCronJobResult::STATUS_OK);
 		}
 		catch(Exception $e)
 		{
-			$status = ilCronJobResult::STATUS_CRASHED;
+			$result->setStatus(ilCronJobResult::STATUS_CRASHED);
+			$result->setMessage($e->getMessage());
 			ilFhoevLogger::getLogger()->write("Cron update failed with message: " . $e->getMessage());
 		}
 
-		$result = new ilCronJobResult();
-		$result->setStatus($status);
+
+
 
 		return $result;
 	}

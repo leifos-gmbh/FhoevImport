@@ -12,7 +12,7 @@ if($ilDB->tableColumnExists("object_data", "antrago_id"))
 <#2>
 <?php
 
-$query = "DELETE FROM ctrl_classfile WHERE plugin_path LIKE './Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/FhoevImport';";
+$query = "DELETE FROM ctrl_classfile WHERE".$ilDB->like('plugin_path','text', './Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/FhoevImport');
 $res = $ilDB->manipulate($query);
 
 ?>

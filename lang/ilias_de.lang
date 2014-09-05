@@ -15,3 +15,4 @@ import_success#:#Der Import wurde erfolgreich durchgeführt.
 err_import_locked#:#Der Import kann nicht gestartet werden, da ein anderer Importvorgang läuft.
 cron#:#Aktualisierung per Cron-job
 cron_interval#:#Aktualisierungsintervall
+cron_job_info#:#Wenn aktiviert, werden Benutzer, Kategorien, Kurse und Gruppen automatisch aktualisiert und importiert.
