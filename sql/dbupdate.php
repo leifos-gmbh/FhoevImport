@@ -5,7 +5,7 @@ if($ilDB->tableColumnExists("object_data", "antrago_id"))
 	$query = 'UPDATE object_data SET '.
 		'import_id = antrago_id '.
 		'WHERE antrago_id > 0';
-	$res = $ilDB->manipulate($query);
+	#$res = $ilDB->manipulate($query);
 }
 
 ?>
