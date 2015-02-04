@@ -74,6 +74,13 @@ class ilFhoevUserImportParser extends ilFhoevImportParser
 			{
 				ilFhoevLogger::getLogger()->write('Setting action to "Insert"');
 				$userNode['Action'] = 'Insert';
+
+				if(!$userNode->xpath("./Pref[@key='public_profile']"))
+				{
+					$pref = $userNode->addChild('Pref', 'y');
+					$pref->addAttribute('key', 'public_profile');
+				}
+
 			}
 			
 			// 
