@@ -52,13 +52,25 @@ class ilFhoevGroupImportParser extends ilFhoevImportParser
 			
 			$group_id = (string) $groupNode['Id'];
 			$obj_id = $this->lookupObjId($group_id,'grp');
+
+			$delete_flag = false;
 			
 			ilFhoevLogger::getLogger()->write('Handling group '. (string) $groupNode->Title . ' with id '. $group_id. '...');
 
 			if($obj_id)
 			{
-				// call update group
-				ilFhoevLogger::getLogger()->write('Group exists. Calling update.');
+				if($groupNode['Action'] == "Delete")
+				{
+					//Call delete group
+					ilFhoevLogger::getLogger()->write('Group exists. Calling delete.');
+					$delete_flag = true;
+					$groupNode['importId'] = $group_id;
+				}else
+				{
+					// call update group
+					ilFhoevLogger::getLogger()->write('Group exists. Calling update.');
+				}
+
 				$groupNode['id'] = $obj_id;
 				$group_ref_id = $this->getReferenceId($obj_id);
 				if(!$group_ref_id)
@@ -76,7 +88,7 @@ class ilFhoevGroupImportParser extends ilFhoevImportParser
 				$tmp_parent = $groupNode['parentId'];
 				if(!$tmp_parent)
 				{
-					ilFhoevLogger::getLogger()->write('ERROR: Missing attribute parentId for '. (string) $groupNode->Title);
+					ilFhoevLogger::getLogger()->write('ERROR: Missing attribute parentId for '. (string) $groupNode->title);
 					$this->hasErrors = true;
 					continue;
 					//throw new ilFhoevIOException('Missing attribute parentId for '. (string) $groupNode->Title);
@@ -132,15 +144,21 @@ class ilFhoevGroupImportParser extends ilFhoevImportParser
 			unset($groupNode['Id']);
 			unset($groupNode['parentId']);
 			unset($groupNode['Action']);
-			
-			if(!count($groupNode->admin))
+
+
+
+			if(!count($groupNode->admin)&& !$delete_flag)
 			{
 				ilFhoevLogger::getLogger()->write('ERROR: No admin found for '. (string) $groupNode->title);
 				$this->hasErrors = true;
 				continue;
 			}
-			
-			if($obj_id)
+
+			if($obj_id && $delete_flag)
+			{
+				$this->deleteGroupSoap($groupNode['importId']);
+			}
+			elseif($obj_id)
 			{
 				$this->updateGroupSoap($group_ref_id,$groupNode->saveXML());
 			}
@@ -189,6 +207,24 @@ class ilFhoevGroupImportParser extends ilFhoevImportParser
 			);
 		ilFhoevLogger::getLogger()->write('Update group response is: '. $res);
 		
+	}
+
+	/**
+	 * Delete group soap
+	 * @param string $import_id
+	 */
+	protected function deleteGroupSoap($import_id)
+	{
+		//ilFhoevLogger::getLogger()->write('Using xml : '. $xml);
+		$res = $this->getSoapClient()->call(
+			'removeFromSystemByImportId',
+			array(
+				$this->soap_session,
+				$import_id
+			)
+		);
+		ilFhoevLogger::getLogger()->write('Delete object response is: '. $res);
+
 	}
 	
 	
