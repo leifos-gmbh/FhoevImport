@@ -38,6 +38,8 @@ class ilFhoevGroupImportParser extends ilFhoevImportParser
 
 	public function startParsing()
 	{
+		global $tree;
+
 		$this->initSoapClient(300);
 		$this->loginSoap();
 
@@ -80,6 +82,33 @@ class ilFhoevGroupImportParser extends ilFhoevImportParser
 					continue;
 					//throw new ilFhoevIOException('No reference id found for '. (string) $groupNode->title);
 				}
+
+				$tmp_parent = $groupNode['parentId'];
+				if($tmp_parent)
+				{
+					$group_parent_obj_id = $this->lookupObjId($tmp_parent,'cat');
+					if(!$group_parent_obj_id)
+					{
+						ilFhoevLogger::getLogger()->write('ERROR: No parent category found for '. (string) $groupNode->title);
+						$this->hasErrors = true;
+						continue;
+					}
+					$group_parent_ref_id = $this->getReferenceId($group_parent_obj_id);
+					if(!$group_parent_ref_id)
+					{
+						ilFhoevLogger::getLogger()->write('ERROR: No parent category ref_id found for '. (string) $groupNode->title);
+						$this->hasErrors = true;
+						continue;
+					}
+
+					if($tree->getParentId($group_ref_id) != $group_parent_ref_id)
+					{
+						ilFhoevLogger::getLogger()->write('Group Parent differs from actual parent. Move to new parent.');
+						$tree->moveTree($group_ref_id, $group_parent_ref_id);
+					}
+				}
+
+
 			}
 			else
 			{
