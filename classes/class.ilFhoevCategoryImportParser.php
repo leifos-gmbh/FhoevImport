@@ -137,6 +137,8 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 	
 	protected function createCategory()
 	{
+		ilFhoevLogger::getLogger()->write('Update category: ' . $this->getWriter()->xmlDumpMem());
+
 		if(!$this->parent_id)
 		{
 			ilFhoevLogger::getLogger()->write('Invalid parent id given for: '. $this->getWriter()->xmlDumpMem(false));
