@@ -163,7 +163,7 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 	protected function lookupParentId($a_id,$a_type)
 	{
 		ilFhoevLogger::getLogger()->write('Lookup parent id for: '. $a_id);
-		if($a_id == 0)
+		if(!$a_id)
 		{
 			return 1;
 		}
