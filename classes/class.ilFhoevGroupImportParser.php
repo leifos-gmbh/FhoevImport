@@ -153,7 +153,7 @@ class ilFhoevGroupImportParser extends ilFhoevImportParser
 					continue;
 					#throw new ilFhoevIOException('Member not found for '. (string) $groupNode->title. ' '. (string) $adminNode['id']);
 				}
-				$adminNode['id'] = $admin_id;
+				$adminNode['id'] = 'il_'.IL_INST_ID.'_usr_'.$admin_id;
 			}
 			// Admins
 			foreach($groupNode->admin as $adminNode)
@@ -167,7 +167,7 @@ class ilFhoevGroupImportParser extends ilFhoevImportParser
 					continue;
 					#throw new ilFhoevIOException('Administrator not found for '. (string) $groupNode->title. ' '. (string) $adminNode['id']);
 				}
-				$adminNode['id'] = $admin_id;
+				$adminNode['id'] = 'il_'.IL_INST_ID.'_usr_'.$admin_id;
 			}
 
 			unset($groupNode['Id']);
