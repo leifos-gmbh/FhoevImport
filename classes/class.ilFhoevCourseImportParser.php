@@ -9,9 +9,12 @@
  */
 class ilFhoevCourseImportParser extends ilFhoevImportParser
 {
+	const MAIN_COURSE = 'stammkurs';
+	
 	protected $xmlElement = null;
 	
 	protected $hasErrors = false;
+	protected $isMainCourse = FALSE;
 	
 	
 	/**
@@ -47,10 +50,16 @@ class ilFhoevCourseImportParser extends ilFhoevImportParser
 		
 		$this->xmlElement = simplexml_load_file($this->getXmlFile());
 
+		
 		foreach($this->xmlElement->Course as $courseNode)
 		{
 			$course_parent_ref_id = 0;
 			$course_ref_id = 0;
+			
+			// main course
+			$this->isMainCourse = (((string) $courseNode['type']) == self::MAIN_COURSE) ? TRUE : FALSE;
+			
+			ilFhoevLogger::getLogger()->write('Is main course: '. $this->isMainCourse);
 			
 			$course_id = (string) $courseNode['Id'];
 			$obj_id = $this->lookupObjId($course_id,'crs');
