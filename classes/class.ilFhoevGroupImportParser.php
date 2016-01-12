@@ -67,7 +67,8 @@ class ilFhoevGroupImportParser extends ilFhoevImportParser
 					ilFhoevLogger::getLogger()->write('Group exists. Calling delete.');
 					$delete_flag = true;
 					$groupNode['importId'] = $group_id;
-				}else
+				}
+				else
 				{
 					// call update group
 					ilFhoevLogger::getLogger()->write('Group exists. Calling update.');
@@ -107,8 +108,6 @@ class ilFhoevGroupImportParser extends ilFhoevImportParser
 						$tree->moveTree($group_ref_id, $group_parent_ref_id);
 					}
 				}
-
-
 			}
 			else
 			{

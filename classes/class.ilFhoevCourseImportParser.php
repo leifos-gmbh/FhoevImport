@@ -79,6 +79,31 @@ class ilFhoevCourseImportParser extends ilFhoevImportParser
 					//throw new ilFhoevIOException('No reference id found for '. (string) $courseNode->MetaData->General->Title);
 					continue;
 				}
+				
+				$tmp_parent = $courseNode['parentId'];
+				if($tmp_parent)
+				{
+					$course_parent_obj_id = $this->lookupObjId($tmp_parent,'cat');
+					if(!$course_parent_obj_id)
+					{
+						ilFhoevLogger::getLogger()->write('ERROR: No parent category found for '. (string) $courseNode->MetaData->General->Title);
+						$this->hasErrors = true;
+						continue;
+					}
+					$course_parent_ref_id = $this->getReferenceId($course_parent_obj_id);
+					if(!$course_parent_ref_id)
+					{
+						ilFhoevLogger::getLogger()->write('ERROR: No parent category ref_id found for '. (string) $courseNode->MetaData->General->Title);
+						$this->hasErrors = true;
+						continue;
+					}
+
+					if($tree->getParentId($course_ref_id) != $course_parent_ref_id)
+					{
+						ilFhoevLogger::getLogger()->write('Course parent differs from actual parent. Move to new parent.');
+						$tree->moveTree($course_ref_id, $course_parent_ref_id);
+					}
+				}
 			}
 			else
 			{

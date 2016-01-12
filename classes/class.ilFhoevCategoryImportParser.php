@@ -10,9 +10,12 @@
 class ilFhoevCategoryImportParser extends ilFhoevImportParser
 {
 	protected $import_id = 0;
-	
-	
-	/**
+	protected $move_node = array();
+
+
+
+
+/**
 	 * constructor
 	 * @param type $a_file 
 	 */
@@ -40,12 +43,14 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 				break;
 
 			case 'Category':
+				$this->move_node = array();
 				$this->import_id = $a_attribs['id'];
 				$this->initWriter();
 				$this->getWriter()->xmlStartTag('Objects');
 				$obj_id = $this->lookupObjId($a_attribs['id'],'cat');
 				if($obj_id)
 				{
+					$this->verifyMoveNode($obj_id, $a_attribs['parentId']);
 					$this->setUpdate(true);
 					$this->getWriter()->xmlStartTag('Object', array('obj_id' => $obj_id, 'type' => 'cat'));
 				}
@@ -75,6 +80,36 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 		
 	}
 	
+	protected function verifyModeNode($a_obj_id, $a_parent_id)
+	{
+		global $tree;
+		
+		$cat_parent_obj_id = $this->lookupObjId($tmp_parent,'cat');
+		$cat_parent_ref_id = $this->getReferenceId($cat_parent_obj_id);
+		if(!$cat_parent_ref_id)
+		{
+			ilFhoevLogger::getLogger()->write('ERROR: No parent category ref_id found');
+			return false;
+		}
+		$cat_ref_id = $this->getReferenceId($a_obj_id);
+		if(!$cat_ref_id)
+		{
+			ilFhoevLogger::getLogger()->write('ERROR: No category ref_id found');
+			return false;
+		}
+		
+		if($tree->getParentId($cat_ref_id) != $cat_parent_ref_id)
+		{
+			ilFhoevLogger::getLogger()->write('category parent differs from actual parent. Move to new parent.');
+			$this->move_node = array(
+				'doMove' => true,
+				'ref_id' => $cat_ref_id,
+				'parent' => $cat_parent_ref_id
+			);
+		}
+		return false;
+	}
+	
 	protected function handlerEndTag($a_xml_parser, $a_name) 
 	{
 		switch($a_name)
@@ -89,6 +124,7 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 				if($this->isUpdate())
 				{
 					$this->updateCategory();
+					$this->doMove();
 				}
 				else
 				{
@@ -134,7 +170,19 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 		);
 	}
 	
-	
+	protected function doMove()
+	{
+		if($this->move_node['doMove'])
+		{
+			ilFhoevLogger::getLogger()->write('Starting move tree.');
+			$GLOBALS['tree']->moveTree($this->move_node['ref_id'], $this->move_node['parent']);
+			ilFhoevLogger::getLogger()->write('Tree moved.');
+		}
+	}
+
+
+
+
 	protected function createCategory()
 	{
 		ilFhoevLogger::getLogger()->write('Create category: ' . $this->getWriter()->xmlDumpMem().' in parent_id '. $this->parent_id);
