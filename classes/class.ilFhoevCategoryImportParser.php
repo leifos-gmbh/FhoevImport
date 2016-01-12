@@ -84,7 +84,7 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 	{
 		global $tree;
 		
-		$cat_parent_obj_id = $this->lookupObjId($tmp_parent,'cat');
+		$cat_parent_obj_id = $this->lookupObjId($a_parent_id,'cat');
 		$cat_parent_ref_id = $this->getReferenceId($cat_parent_obj_id);
 		if(!$cat_parent_ref_id)
 		{
