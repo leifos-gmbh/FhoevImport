@@ -80,7 +80,7 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 		
 	}
 	
-	protected function verifyModeNode($a_obj_id, $a_parent_id)
+	protected function verifyMoveNode($a_obj_id, $a_parent_id)
 	{
 		global $tree;
 		
