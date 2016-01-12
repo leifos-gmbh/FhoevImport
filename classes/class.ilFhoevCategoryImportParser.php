@@ -10,6 +10,7 @@
 class ilFhoevCategoryImportParser extends ilFhoevImportParser
 {
 	protected $import_id = 0;
+	protected $import_parent_id = 0;
 	protected $move_node = array();
 
 
@@ -43,14 +44,13 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 				break;
 
 			case 'Category':
-				$this->move_node = array();
 				$this->import_id = $a_attribs['id'];
+				$this->import_parent_id = $a_attribs['parentId'];
 				$this->initWriter();
 				$this->getWriter()->xmlStartTag('Objects');
 				$obj_id = $this->lookupObjId($a_attribs['id'],'cat');
 				if($obj_id)
 				{
-					$this->verifyMoveNode($obj_id, $a_attribs['parentId']);
 					$this->setUpdate(true);
 					$this->getWriter()->xmlStartTag('Object', array('obj_id' => $obj_id, 'type' => 'cat'));
 				}
@@ -84,9 +84,10 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 	{
 		global $tree;
 		
-		$cat_parent_obj_id = $this->lookupObjId($a_parent_id,'cat');
-		$cat_parent_ref_id = $this->getReferenceId($cat_parent_obj_id);
-		if(!$cat_parent_ref_id)
+		$this->move_node = array();
+		
+		$parent_id = $this->lookupParentId($a_parent_id, 'cat');
+		if(!$parent_id)
 		{
 			ilFhoevLogger::getLogger()->write('ERROR: No parent category ref_id found');
 			return false;
@@ -98,14 +99,15 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 			return false;
 		}
 		
-		if($tree->getParentId($cat_ref_id) != $cat_parent_ref_id)
+		if($tree->getParentId($cat_ref_id) != $parent_id)
 		{
-			ilFhoevLogger::getLogger()->write('category parent differs from actual parent. Move to new parent.');
+			ilFhoevLogger::getLogger()->write('Category parent differs from actual parent. Move to new parent.');
 			$this->move_node = array(
 				'doMove' => true,
 				'ref_id' => $cat_ref_id,
-				'parent' => $cat_parent_ref_id
+				'parent' => $parent_id
 			);
+			return true;
 		}
 		return false;
 	}
@@ -124,7 +126,17 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 				if($this->isUpdate())
 				{
 					$this->updateCategory();
-					$this->doMove();
+					
+					if(
+						$this->verifyMoveNode(
+							$this->lookupObjId($this->import_id,'cat'),
+							$this->import_parent_id
+						)
+							
+					)
+					{
+						$this->doMove();
+					}
 				}
 				else
 				{
