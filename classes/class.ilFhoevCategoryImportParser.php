@@ -86,13 +86,16 @@ class ilFhoevCategoryImportParser extends ilFhoevImportParser
 		
 		$this->move_node = array();
 		
+		ilFhoevLogger::getLogger()->write('verify move for : '. $a_obj_id.' '. $a_parent_id);
 		$parent_id = $this->lookupParentId($a_parent_id, 'cat');
+		ilFhoevLogger::getLogger()->write('verify move parent id : '. $parent_id);
 		if(!$parent_id)
 		{
 			ilFhoevLogger::getLogger()->write('ERROR: No parent category ref_id found');
 			return false;
 		}
 		$cat_ref_id = $this->getReferenceId($a_obj_id);
+		ilFhoevLogger::getLogger()->write('verify move cat ref_id : '. $cat_ref_id);
 		if(!$cat_ref_id)
 		{
 			ilFhoevLogger::getLogger()->write('ERROR: No category ref_id found');
