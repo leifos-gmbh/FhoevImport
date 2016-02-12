@@ -98,10 +98,10 @@ class ilFhoevCourseImportParser extends ilFhoevImportParser
 						continue;
 					}
 
-					if($GLOBALS['ilTree']->getParentId($course_ref_id) != $course_parent_ref_id)
+					if($GLOBALS['tree']->getParentId($course_ref_id) != $course_parent_ref_id)
 					{
 						ilFhoevLogger::getLogger()->write('Course parent differs from actual parent. Move to new parent.');
-						$GLOBALS['ilTree']->moveTree($course_ref_id, $course_parent_ref_id);
+						$GLOBALS['tree']->moveTree($course_ref_id, $course_parent_ref_id);
 					}
 				}
 			}
