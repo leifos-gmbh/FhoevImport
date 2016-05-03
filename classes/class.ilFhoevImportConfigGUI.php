@@ -32,6 +32,12 @@ class ilFhoevImportConfigGUI extends ilPluginConfigGUI
 			$GLOBALS['ilCtrl']->getLinkTarget($this,'import')
 		);
 		
+		$ilTabs->addTab(
+			'migration',
+			ilFhoevImportPlugin::getInstance()->txt('tab_migration'),
+			$GLOBALS['ilCtrl']->getLinkTarget($this, 'initMigration')
+		);
+		
 		
 		$ilCtrl->saveParameter($this, "menu_id");
 		
@@ -283,6 +289,111 @@ class ilFhoevImportConfigGUI extends ilPluginConfigGUI
 		}
 		ilUtil::sendFailure($lng->txt('err_check_input'));
 		$this->import($form);
+	}
+	
+	/**
+	 * Init main course migration
+	 * @param \ilPropertyFormGUI $form
+	 */
+	protected function initMigration(ilPropertyFormGUI $form = null)
+	{
+		global $tpl, $ilTabs;
+
+		$ilTabs->activateTab('migration');
+
+		if(!$form instanceof ilPropertyFormGUI)
+		{
+			$form = $this->initMigrationForm();
+		}
+		$tpl->setContent($form->getHTML());
+
+	}
+	
+	/**
+	 * init migration form
+	 */
+	protected function initMigrationForm()
+	{
+		global $ilCtrl;
+		
+		include_once './Services/Form/classes/class.ilPropertyFormGUI.php';
+		$form = new ilPropertyFormGUI();
+		$form->setFormAction($ilCtrl->getFormAction($this));
+		$form->setTitle($this->getPluginObject()->txt('form_migration_init'));
+		
+		$ref = new ilNumberInputGUI($this->getPluginObject()->txt('source_ref_id'), 'ref');
+		$ref->setRequired(true);
+		$ref->setInfo($this->getPluginObject()->txt('source_ref_info'));
+		$ref->setMinValue(1);
+		$ref->setSize(7);
+		$ref->setMaxLength(11);
+		
+		$form->addItem($ref);
+		
+		$form->addCommandButton('saveMigrationSourceSelection', $this->getPluginObject()->txt('btn_save_source_selection'));
+		
+		return $form;
+	}
+	
+	/**
+	 * Show migration form
+	 * @return void
+	 */
+	protected function saveMigrationSourceSelection()
+	{
+		$form = $this->initMigrationForm();
+		if(!$form->checkInput())
+		{
+			$form->setValuesByPost();
+			ilUtil::sendFailure($GLOBALS['lng']->txt('err_check_input'));
+			return $this->initMigration($form);
+		}
+		
+		// save parameter source ref for next steps
+		$GLOBALS['ilCtrl']->setParameter($this, 'ref', (int) $form->getInput('ref'));
+		$GLOBALS['ilCtrl']->redirect($this, 'showMigrationSelection');
+	}
+	
+	/**
+	 * Show migration selection 
+	 */
+	protected function showMigrationSelection()
+	{
+		global $ilTabs;
+		
+		$ilTabs->activateTab('migration');
+		
+		if(!(int) $_REQUEST['ref'])
+		{
+			ilUtil::sendFailure($GLOBALS['lng']->txt('err_check_input'), true);
+			$GLOBALS['ilCtrl']->redirect($this, 'initMigration');
+			return false;
+		}
+		else
+		{
+			$GLOBALS['ilCtrl']->setParameter($this, 'ref', (int) $_REQUEST['ref']);
+		}
+		
+		
+		// show selection table
+		$table = new ilFhoevMigrationSelectionTableGUI($this, 'showMigrationSelection', 'fhoev_migration');
+		$table->enableObjectPath(true);
+		$table->enableRowSelectionInput(true);
+		$table->init();
+		
+		
+		$node = $GLOBALS['tree']->getNodeData((int) $_REQUEST['ref']);
+		$objects = $GLOBALS['tree']->getSubTree($node, false, array('crs'));
+		
+		include_once './Services/Tree/classes/class.ilPathGUI.php';
+		$path = new ilPathGUI();
+		$path->enableTextOnly(false);
+		$table->customizePath($path);
+		
+		$table->setObjects((array) $objects);
+		$table->parse();
+		
+		$GLOBALS['tpl']->setContent($table->getHTML());
 	}
 
 }

@@ -1,4 +1,5 @@
 tab_settings#:#Einstellungen
+tab_migration#:#Stammkurs-Migration
 tab_import#:#Import
 tbl_fhoev_settings#:#Einstellungen zum Import
 tbl_settting_lock#:#Import-Lock
@@ -16,3 +17,10 @@ err_import_locked#:#Der Import kann nicht gestartet werden, da ein anderer Impor
 cron#:#Aktualisierung per Cron-job
 cron_interval#:#Aktualisierungsintervall
 cron_job_info#:#Wenn aktiviert, werden Benutzer, Kategorien, Kurse und Gruppen automatisch aktualisiert und importiert.
+form_migration_init#:#Auswahl der Start-Kategorie
+source_ref_id#:#Ref_id der Start-Kategorie
+source_ref_info#:#Bitte tragen sie die ref_id der Kategorie ein.
+save_source_selection#:#Weiter
+form_migration_init#:#Auswahl der zu kopierenden Kurse
+migration_original_course#:#Original Stammkurs
+migration_main_course#:#Neuer Stammkurs

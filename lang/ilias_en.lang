@@ -1,4 +1,5 @@
 tab_settings#:#Settings
+tab_migration#:#Main Course Migration
 tab_import#:#Import
 tbl_fhoev_settings#:#Import Settings
 tbl_settting_lock#:#Lock Active
@@ -16,3 +17,10 @@ err_import_locked#:#Import is locked. Aborting.
 cron#:#Refresh per cron-job
 cron_interval#:#Refresh Interval
 cron_job_info#:#Automatic update and import for user, categories, courses and groups via cron job.
+form_migration_init#:#Auswahl der Start-Kategorie
+source_ref_id#:#Ref_id der Start-Kategorie
+source_ref_info#:#Bitte tragen sie die ref_id der Kategorie ein.
+save_source_selection#:#Weiter
+form_migration_init#:#Auswahl der zu kopierenden Kurse
+migration_original_course#:#Original Stammkurs
+migration_main_course#:#Neuer Stammkurs
