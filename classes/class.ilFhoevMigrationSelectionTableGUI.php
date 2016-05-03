@@ -167,10 +167,18 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 	 */
 	public function fillRowSelectionInput($set)
 	{
-		$this->tpl->setCurrentBlock('row_selection_input');
-		$this->tpl->setVariable('OBJ_INPUT_TYPE','checkbox');
-		$this->tpl->setVariable('OBJ_INPUT_NAME','id[]');
-		$this->tpl->setVariable('OBJ_INPUT_VALUE',$set['ref_id']);
+		if($set['main_course'])
+		{
+			$this->tpl->setCurrentBlock('row_selection_input');
+			$this->tpl->setVariable('OBJ_INPUT_TYPE','checkbox');
+			$this->tpl->setVariable('OBJ_INPUT_NAME','id[]');
+			$this->tpl->setVariable('OBJ_INPUT_VALUE',$set['ref_id']);
+			
+		}
+		else
+		{
+			$this->tpl->touchBlock('row_selection');
+		}
 	}
 	
 	protected function parseMainCourses()
