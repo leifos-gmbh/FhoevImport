@@ -60,6 +60,7 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 	 */
 	public function init()
 	{
+		$this->setFormAction($GLOBALS['ilCtrl']->getFormAction($this->getParentObject(),$this->getParentCmd()));
 		if($this->enabledRowSelectionInput())
 		{
 			$this->addColumn('','id','5px');
@@ -70,6 +71,9 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 		
 		$this->setOrderColumn('origin');
         $this->setRowTemplate("tpl.migration_selection_row.html",substr($this->getPlugin()->getDirectory(),2));
+		
+		$this->addMultiCommand('doMigration', $this->getPlugin()->txt('btn_migrate'));
+		$this->setSelectAllCheckbox('id');
 	}
 	
 	/**

@@ -25,3 +25,4 @@ form_migration_init#:#Auswahl der zu kopierenden Kurse
 migration_original_course#:#Original Stammkurs
 migration_main_course#:#Neuer Stammkurs
 num_childs#:#Anzahl Unterobjekte: 
+btn_migrate#:#Migration starten
