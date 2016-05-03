@@ -20,7 +20,8 @@ cron_job_info#:#Wenn aktiviert, werden Benutzer, Kategorien, Kurse und Gruppen a
 form_migration_init#:#Auswahl der Start-Kategorie
 source_ref_id#:#Ref_id der Start-Kategorie
 source_ref_info#:#Bitte tragen sie die ref_id der Kategorie ein.
-save_source_selection#:#Weiter
+btn_save_source_selection#:#Weiter
 form_migration_init#:#Auswahl der zu kopierenden Kurse
 migration_original_course#:#Original Stammkurs
 migration_main_course#:#Neuer Stammkurs
+num_childs#:#Anzahl Unterobjekte: 

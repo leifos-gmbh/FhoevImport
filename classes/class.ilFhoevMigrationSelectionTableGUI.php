@@ -88,6 +88,8 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 			$set[$counter]['type'] = ilObject::_lookupType(ilObject::_lookupObjId($ref_id));
 			$set[$counter]['title'] = ilObject::_lookupTitle(ilObject::_lookupObjId($ref_id));
 			
+			$set[$counter]['childs'] = $this->parseChilds($ref_id);
+			
 			$title = ilObject::_lookupTitle(ilObject::_lookupObjId($ref_id));
 			$title_parts = explode(' ', $title);
 			
@@ -122,6 +124,9 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 		
 		$this->tpl->setVariable('OBJ_LINK',ilLink::_getLink($set['ref_id'], $set['type']));
 		$this->tpl->setVariable('OBJ_LINKED_TITLE',$set['title']);
+		
+		$this->tpl->setVariable('TXT_NUM_CHILDS', $this->getPlugin()->txt('num_childs'));
+		$this->tpl->setVariable('NUM_CHILDS', $set['childs']);
 		
 		if($set['main_course'])
 		{
@@ -183,6 +188,28 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 		}
 	}
 	
+	protected function parseChilds($a_ref_id)
+	{
+		$child_nodes = $GLOBALS['tree']->getChildIds($a_ref_id);
+		if(count($child_nodes) > 1)
+		{
+			return count($child_nodes);
+		}
+		if(count($child_nodes) == 1)
+		{
+			// lookup rolf
+			foreach($child_nodes as $child)
+			{
+				if(ilObject::_lookupType(ilObject::_lookupObjId($child)) == 'rolf')
+				{
+					return 0;
+				}
+			}
+		}
+		return 0;
+	}
+
+
 	protected function getMainCourse($a_title_part)
 	{
 		$res = array_search($a_title_part, $this->main_courses);
