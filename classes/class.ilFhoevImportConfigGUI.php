@@ -395,6 +395,27 @@ class ilFhoevImportConfigGUI extends ilPluginConfigGUI
 		
 		$GLOBALS['tpl']->setContent($table->getHTML());
 	}
+	
+	protected function doMigration()
+	{
+		$GLOBALS['ilCtrl']->setParameter($this, 'ref', (int) $_REQUEST['ref']);
+		if(!is_array($_REQUEST['id']))
+		{
+			ilUtil::sendFailure($GLOBALS['lng']->txt('select_one'),true);
+			$GLOBALS['ilCtrl']->redirect($this, 'showMigrationSelection');
+		}
+		
+		$table = new ilFhoevMigrationSelectionTableGUI($this, 'showMigrationSelection', 'fhoev_migration');
+		$table->enableObjectPath(true);
+		$table->enableRowSelectionInput(true);
+		$table->init();
+		
+		$table->setObjects($_REQUEST['id']);
+		$table->migrate();
+		
+		ilUtil::sendSuccess($this->getPluginObject()->txt('migrated_courses'), true);
+		$GLOBALS['ilCtrl']->redirect($this, 'showMigrationSelection');
+	}
 
 }
 ?>

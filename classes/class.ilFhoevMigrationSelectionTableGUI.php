@@ -77,6 +77,71 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 	}
 	
 	/**
+	 * Migrate chosen courses
+	 */
+	public function migrate()
+	{
+		$set = $this->parse();
+		foreach($set as $num => $info)
+		{
+			// create group
+			include_once './Modules/Group/classes/class.ilObjGroup.php';
+			$group = new ilObjGroup();
+			$group->setTitle($info['main_course_title']);
+			$group->create();
+			$new_ref = $group->createReference();
+			$group->putInTree($info['main_course_ref']);
+			$group->setPermissions($info['main_course_ref']);
+			
+			// move all child nodes to new group
+			foreach((array) $GLOBALS['tree']->getChilds($info['ref_id']) as $child)
+			{
+				ilLoggerFactory::getLogger('fhoevimp')->dump($child, ilLogLevel::DEBUG);
+				ilLoggerFactory::getLogger('fhoevimp')->debug('New reference is: '. $new_ref);
+				ilLoggerFactory::getLogger('fhoevimp')->debug('Old reference is: ' . $child['child']);
+				$GLOBALS['tree']->moveTree($child['child'], $new_ref);
+				$GLOBALS['rbacadmin']->adjustMovedObjectPermissions($child['child'],$info['ref_id']);
+
+			}
+			// admins tutors
+			include_once './Services/Membership/classes/class.ilParticipants.php';
+			$part_old = ilParticipants::getInstanceByObjId($info['obj_id']);
+			$part_new = ilParticipants::getInstanceByObjId(ilObject::_lookupObjId($new_ref));
+			foreach(array_merge($part_old->getAdmins(), $part_old->getTutors()) as $admin)
+			{
+				$part_new->add($admin, IL_GRP_ADMIN);
+			}
+			
+			// finally delete old course
+			include_once './Services/Object/classes/class.ilObjectFactory.php';
+			$factory = new ilObjectFactory();
+			$old_course = $factory->getInstanceByRefId($info['ref_id'], false);
+			if($old_course instanceof ilObjCourse)
+			{
+				ilLoggerFactory::getLogger('fhoevimp')->info('Deleting old course: '. $old_course->getTitle());
+				$old_course->delete();
+			}
+			else
+			{
+				ilLoggerFactory::getLogger('fhoevimp')->warning('CAnnot find course instance for: ' . $info['ref_id']);
+			}
+
+
+			// raise event 
+			$GLOBALS['ilAppEventHandler']->raise(
+				'Modules/Group',
+				'afterCreation',
+				array(
+					'ref_id' => $new_ref,
+					'obj_id' => ilObject::_lookupObjId($new_ref),
+					'obj_type' => 'grp'
+				)
+			);
+		}
+		
+	}
+	
+	/**
 	 * Parse objects
 	 */
 	public function parse()
@@ -100,10 +165,17 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 			$set[$counter]['main_course'] = 0;
 			if($title_parts[0] && $title_parts[1] && $title_parts[2])
 			{
+				$main_course_pattern = $title_parts[0].' '.$title_parts[1].' '.$title_parts[2];
+				$set[$counter]['main_course_title'] = trim(str_replace($main_course_pattern, '', $title));
 				$main_course_obj_id = $this->getMainCourse($title_parts[0].' '.$title_parts[1].' '.$title_parts[2]);
 				if($main_course_obj_id)
 				{
-					$set[$counter]['main_course'] = $main_course_obj_id;
+					if($main_course_obj_id != ilObject::_lookupObjId($ref_id))
+					{
+						$set[$counter]['main_course'] = $main_course_obj_id;
+						$ref_ids = ilObject::_getAllReferences($main_course_obj_id);
+						$set[$counter]['main_course_ref'] = end($ref_ids);
+					}
 				}
 			}
 			
@@ -111,6 +183,7 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 			$counter++;
 		}
 		$this->setData($set);
+		return $set;
 	}
 	
 	/**
