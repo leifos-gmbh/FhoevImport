@@ -119,13 +119,8 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 			if($old_course instanceof ilObjCourse)
 			{
 				ilLoggerFactory::getLogger('fhoevimp')->info('Deleting old course: '. $old_course->getTitle());
+				$GLOBALS['tree']->deleteTree($GLOBALS['tree']->getNodeData($info['ref_id']));
 				$old_course->delete();
-				
-				if($info['ref_id'])
-				{
-					$node = $GLOBALS['tree']->getNodeData($info['ref_id']);
-					$GLOBALS['tree']->deleteTree($node);
-				}
 			}
 			else
 			{
