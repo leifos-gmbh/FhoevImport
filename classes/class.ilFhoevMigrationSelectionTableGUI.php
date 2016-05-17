@@ -121,12 +121,15 @@ class ilFhoevMigrationSelectionTableGUI extends ilObjectTableGUI
 				ilLoggerFactory::getLogger('fhoevimp')->info('Deleting old course: '. $old_course->getTitle());
 				$old_course->delete();
 				
-				$node = $GLOBALS['tree']->getNodeData($info['ref_id']);
-				$GLOBALS['tree']->deleteTree($node);
+				if($info['ref_id'])
+				{
+					$node = $GLOBALS['tree']->getNodeData($info['ref_id']);
+					$GLOBALS['tree']->deleteTree($node);
+				}
 			}
 			else
 			{
-				ilLoggerFactory::getLogger('fhoevimp')->warning('CAnnot find course instance for: ' . $info['ref_id']);
+				ilLoggerFactory::getLogger('fhoevimp')->warning('Cannot find course instance for: ' . $info['ref_id']);
 			}
 
 
