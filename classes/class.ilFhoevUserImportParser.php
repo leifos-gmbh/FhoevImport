@@ -88,7 +88,7 @@ class ilFhoevUserImportParser extends ilFhoevImportParser
 		}
 		
 		// Write to soap
-		$this->initSoapClient(3600);
+		$this->initSoapClient(10800);
 		$this->loginSoap();
 		
 		$res = $this->getSoapClient()->call(
