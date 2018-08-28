@@ -15,7 +15,7 @@ class ilFhoevLogger extends ilLog
 	
 	protected static $instance = null;
 	
-	protected function __construct() 
+	public function __construct()
 	{
 		include_once './Services/Calendar/classes/class.ilDateTime.php';
 		$now = new ilDateTime(time(), IL_CAL_UNIX);
@@ -43,11 +43,11 @@ class ilFhoevLogger extends ilLog
 	
 	
 	/**
-	 * Write message
-	 * @param type $a_message 
+	 * @inheritdoc
 	 */
-	public function write($a_message)
+	public function write($a_message, $a_log_level = null)
 	{
+		ilLoggerFactory::getLogger('fhoevenvent')->info($a_message);
 		$this->setLogFormat(date('[Y-m-d H:i:s] '));
 		parent::write($a_message);
 	}

@@ -18,7 +18,6 @@ class ilFhoevImportConfigGUI extends ilPluginConfigGUI
 	{
 		global $ilCtrl;
 		global $ilTabs;
-		
 
 		$ilTabs->addTab(
 			'settings',
